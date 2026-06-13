@@ -22,3 +22,7 @@ slides/latex/*.fls
 
 # SO
 .DS_Store
+
+# video narrado
+video/build/
+video/*.mp4

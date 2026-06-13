@@ -25,8 +25,11 @@ FRAMES = BUILD / "frames"
 AUDIO = BUILD / "audio"
 SEGS = BUILD / "segments"
 FINAL = HERE / "defensa_winoground_video.mp4"
-VOICE = os.environ.get("VOICE", "Paulina")          # es_MX
-RATE = os.environ.get("RATE", "165")                 # palabras/min aprox
+ENGINE = os.environ.get("TTS", "kokoro")             # kokoro (neural) | say (macOS)
+VOICE = os.environ.get("VOICE", "em_santa" if os.environ.get("TTS", "kokoro") == "kokoro" else "Paulina")
+RATE = os.environ.get("RATE", "165")                 # solo para `say`
+KOKORO_HOME = Path(os.environ.get(
+    "KOKORO_HOME", "/Volumes/Niels_mac/circuitpyper-inference/lnm_animations"))
 W, H = 1920, 1080
 
 sys.path.insert(0, str(HERE))
@@ -58,19 +61,28 @@ def main():
     if len(pages) != len(NARRATION):
         print(f"      AVISO: {len(pages)} páginas vs {len(NARRATION)} narraciones; uso {n}.")
 
-    # 2) narración -> wav  y  3) segmentos
-    print("[2-3/4] TTS + segmentos ...")
+    # 2) narración -> wav
+    print(f"[2/4] TTS ({ENGINE}, voz {VOICE}) ...")
+    if ENGINE == "kokoro":
+        # genera todos los wav cargando el modelo una sola vez (en el venv de Kokoro)
+        kpy = KOKORO_HOME / ".venv" / "bin" / "python"
+        run([str(kpy), str(HERE / "synth_kokoro.py"),
+             "--voice", VOICE, "--out", str(AUDIO)])
+    else:
+        for i in range(n):
+            aiff = AUDIO / f"n{i:02d}.aiff"
+            wav = AUDIO / f"n{i:02d}.wav"
+            run(["say", "-v", VOICE, "-r", RATE, "-o", str(aiff), NARRATION[i]])
+            run(["ffmpeg", "-y", "-i", str(aiff), "-ar", "44100", "-ac", "2", str(wav)])
+
+    # 3) segmentos (imagen + audio)
+    print("[3/4] segmentos ...")
     seg_list = SEGS / "segments.txt"
     with open(seg_list, "w") as lf:
         for i in range(n):
             page = pages[i]
-            text = NARRATION[i]
-            aiff = AUDIO / f"n{i:02d}.aiff"
             wav = AUDIO / f"n{i:02d}.wav"
             seg = SEGS / f"seg{i:02d}.mp4"
-            # TTS con say
-            run(["say", "-v", VOICE, "-r", RATE, "-o", str(aiff), text])
-            run(["ffmpeg", "-y", "-i", str(aiff), "-ar", "44100", "-ac", "2", str(wav)])
             dur = ffprobe_dur(wav)
             # segmento: imagen fija (escalada/pad a 1920x1080) + audio, +0.4s de cola
             vf = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,"

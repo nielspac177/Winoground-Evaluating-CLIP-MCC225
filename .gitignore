@@ -26,3 +26,7 @@ slides/latex/*.fls
 # video narrado
 video/build/
 video/*.mp4
+
+# embeddings versionados para reproducir el entrenamiento
+!data/embeddings/
+!data/embeddings/winoground_real_vitb32.npz

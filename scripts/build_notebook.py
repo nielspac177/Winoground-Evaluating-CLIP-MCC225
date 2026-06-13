@@ -42,6 +42,25 @@ def build():
         "El resto es profundidad para preguntas."
     ))
 
+    # ---- Plan de exposición (20 min) ----
+    c.append(md(
+        "## 📋 Plan de exposición (20 min)\n\n"
+        "| Tiempo | Qué hago | Apoyo |\n"
+        "|---|---|---|\n"
+        "| 0:00–2:30 | **Problema**: par mínimo, 3 métricas, azar 1/6, tesis | slides 1–7 |\n"
+        "| 2:30–5:00 | **Método**: CLIP dual-encoder (C10), por qué falla (C5/C8), scorer, validación | slides 8–12 |\n"
+        "| 5:00–8:30 | **Resultados**: scores, R@K vs group, por tag, ceguera, checkpoints | slides 13–19 |\n"
+        "| 8:30–12:30 | **Verificación EN VIVO**: este notebook, celdas 1, 4 (scorer), 6 (validación), 5 | notebook |\n"
+        "| 12:30–15:30 | **Entrenamiento + crítica**: re-ranker + validación cruzada + conclusión honesta | §12 |\n"
+        "| 15:30–18:00 | **Defensa crítica**: limitaciones + mejora (cross-encoder) | slides 22–23 |\n"
+        "| 18:00–20:00 | **Cierre + preguntas** | slide 24 |\n\n"
+        "**En vivo solo re-corro lo rápido:** celda 4 (scorer) y celda 6 (validación). El resto va pre-ejecutado.\n\n"
+        "**Tres frases que debo clavar:**\n"
+        "1. *Recall@5=0.67 pero group=0.075: el retrieval no implica composición.*\n"
+        "2. *Mi scorer reproduce exactamente los scores oficiales de CLIP: está validado.*\n"
+        "3. *Probé la mejora con validación cruzada; con 400 ejemplos no alcanza para afirmar que gana — es prueba de concepto.*"
+    ))
+
     c.append(md("## 1. Entorno (trazabilidad)"))
     c.append(code(
         "import os, sys, pathlib, json, re, glob\n"

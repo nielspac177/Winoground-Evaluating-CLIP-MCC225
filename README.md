@@ -67,13 +67,15 @@ El benchmark `facebook/winoground` es **gated**. Para usar el dataset real:
 
 ```mermaid
 flowchart LR
-    A[winoground_data.py<br/>real HF · fallback curado] --> B[openclip_utils.py<br/>encode imagen/texto · C10]
-    B --> C[winoground_eval.py<br/>text/image/group score]
-    C --> D[metrics.py<br/>Recall@K · bootstrap CI]
-    C --> E[error_analysis.py<br/>por tag · casos]
-    B --> F[blindness_probe.py<br/>¿usa la imagen?]
-    D & E & F --> G[outputs/metrics + figures]
-    G --> H[notebook · slides · docs]
+    A["winoground_data.py<br/>real HF / fallback curado"] --> B["openclip_utils.py<br/>encode imagen-texto (C10)"]
+    B --> C["winoground_eval.py<br/>text / image / group score"]
+    C --> D["metrics.py<br/>Recall@K, bootstrap CI"]
+    C --> E["error_analysis.py<br/>por tag, casos"]
+    B --> F["blindness_probe.py<br/>uso de la imagen"]
+    D --> G["outputs: metrics + figures"]
+    E --> G
+    F --> G
+    G --> H["notebook, slides, docs"]
 ```
 
 ## Mapa a los cuadernos del curso
